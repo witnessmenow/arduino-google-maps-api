@@ -22,7 +22,7 @@ Include GoogleMapsApi in your project:
 
     #include <GoogleMapsApi.h>
 
-and pass it a Bot token and a SSL Client (See the examples for more details)
+and pass it a API token and a SSL Client (See the examples for more details)
 
     #define API_KEY "XXXXXXXXX:XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
     // WiFiSSLClient client; //For 101 boards

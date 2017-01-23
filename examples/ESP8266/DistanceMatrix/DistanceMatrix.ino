@@ -1,10 +1,10 @@
 #include <GoogleMapsApi.h>
 
 /*******************************************************************
- *  An example of bot that echos back any messages received        *
+ *  An example of usisng the distance-matrix api to get            *
+ *  travel time (with traffic) between two locations               *
  *                                                                 *
- *  written by Giacarlo Bacchio (Gianbacchio on Github)            *
- *  adapted by Brian Lough                                         *
+ *  Written by Brian Lough                                         *
  *******************************************************************/
 
 
@@ -12,10 +12,9 @@
 #include <WiFiClientSecure.h>
 
 //------- Replace the following! ------
-char ssid[] = "Mikrotik";       // your network SSID (name)
-char password[] = "carolinebrian";  // your network key
-#define API_KEY "AIzaSyCja04dWL2Jcwd9OIlAsJ0jntssAHUe_ik"  // your google apps API Token
-
+char ssid[] = "SSID";       // your network SSID (name)
+char password[] = "PASSWORD";  // your network key
+#define API_KEY "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"  // your google apps API Token
 
 WiFiClientSecure client;
 GoogleMapsApi api(API_KEY, client);
