@@ -20,6 +20,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 String currentKey = "";
 String currentParent = "";
+String parentsParent = "";
 DirectionsResponse responseObject;
 
 //**************************************************************************//
@@ -61,27 +62,29 @@ void DirectionsListener::key(String key) {
 }
 
 void DirectionsListener::value(String value) {
-  if (currentParent == "distance"){
-    if (currentKey == "text"){
-  	  responseObject.distance_text = value;
-    } else if (currentKey == "value") {
-      //TODO: need to convert to int
-    }
-  } else if (currentParent == "duration"){
-    if (currentKey == "text"){
-  	  responseObject.duration_text = value;
-    } else if (currentKey == "value") {
-      //TODO: need to convert to int
-    }
-  } else if (currentParent == "duration_in_traffic"){
-    if (currentKey == "text"){
-  	  responseObject.durationTraffic_text = value;
-    } else if (currentKey == "value") {
-      //TODO: need to convert to int
-    }
-  } else {
-    if(currentKey == "summary"){
-  	  responseObject.summary = value;
+  if (parentsParent == "legs") {
+    if (currentParent == "distance") {
+      if (currentKey == "text") {
+    	  responseObject.distance_text = value;
+      } else if (currentKey == "value") {
+        responseObject.distance_value = value.toInt();
+      }
+    } else if (currentParent == "duration") {
+      if (currentKey == "text") {
+    	  responseObject.duration_text = value;
+      } else if (currentKey == "value") {
+        responseObject.duration_value = value.toInt();
+      }
+    } else if (currentParent == "duration_in_traffic") {
+      if (currentKey == "text") {
+    	  responseObject.durationTraffic_text = value;
+      } else if (currentKey == "value") {
+        responseObject.durationTraffic_value = value.toInt();
+      }
+    } else {
+      if(currentKey == "summary") {
+    	  responseObject.summary = value;
+      }
     }
   }
 }
@@ -91,7 +94,8 @@ void DirectionsListener::endArray() {
 }
 
 void DirectionsListener::endObject() {
-  currentParent = "";
+  currentParent = parentsParent;
+  parentsParent = "";
   //Serial.println("end object. ");
 }
 
@@ -104,6 +108,7 @@ void DirectionsListener::startArray() {
 }
 
 void DirectionsListener::startObject() {
+  parentsParent = currentParent;
   currentParent = currentKey;
    //Serial.println("start object. ");
 }

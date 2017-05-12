@@ -68,8 +68,23 @@ void checkGoogleMaps() {
   Serial.println("Getting traffic for " + origin + " to " + destination);
   DirectionsResponse response = api.directionsApi(origin, destination, departureTime, trafficModel);
   Serial.println("Response:");
-  Serial.println(response.durationTraffic_text);
+  Serial.print("Summary: ");
   Serial.println(response.summary);
+
+  Serial.print("Duration in Traffic text: ");
+  Serial.println(response.durationTraffic_text);
+  Serial.print("Duration in Traffic in minutes: ");
+  Serial.println(response.durationTraffic_value);
+
+  Serial.print("Normal duration text: ");
+  Serial.println(response.duration_text);
+  Serial.print("Normal duration in minutes: ");
+  Serial.println(response.duration_value);
+
+  Serial.print("Distance text: ");
+  Serial.println(response.distance_text);
+  Serial.print("Distance in meters: ");
+  Serial.println(response.distance_value);
 }
 
 void loop() {
