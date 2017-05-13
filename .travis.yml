@@ -10,6 +10,7 @@ cache:
 
 env:
     - SCRIPT=platformioSingle EXAMPLE_NAME=DistanceMatrix EXAMPLE_FOLDER=/ BOARDTYPE=ESP8266 BOARD=d1_mini
+    - SCRIPT=platformioSingle EXAMPLE_NAME=Directions EXAMPLE_FOLDER=/ BOARDTYPE=ESP8266 BOARD=d1_mini
 
 
 install:
@@ -19,5 +20,7 @@ install:
     #
     # http://platformio.org/lib/show/64/ArduinoJson
     - platformio lib -g install 64
+    # http://platformio.org/lib/show/561/JsonStreamingParser
+    - platformio lib -g install 561
 
 script: scripts/travis/$SCRIPT.sh
