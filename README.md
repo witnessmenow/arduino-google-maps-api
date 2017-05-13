@@ -2,7 +2,7 @@
 A wrapper for the [Google Maps API](https://developers.google.com/maps/documentation) for Arduino (works on ESP8266). Available on the Arduino library manager.
 
 There are now two different parts of the API implemented and they can be used separately (They are independent of each other)
-- [Distance Matrix](https://developers.google.com/maps/documentation/distance-matrix/)
+
 
 # Directions API
 
