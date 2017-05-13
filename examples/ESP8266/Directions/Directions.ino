@@ -1,9 +1,10 @@
 #include <GoogleMapsDirectionsApi.h>
 
 /*******************************************************************
- *  An example of usisng the distance-matrix api to get            *
+ *  An example of usisng the directions api to get                 *
  *  travel time (with traffic) between two locations               *
- *                                                                 *
+ *  Example also shows setting a waypoint if you want a specific   *
+ *  route                                                          *
  *  Written by Brian Lough                                         *
  *******************************************************************/
 
@@ -20,22 +21,19 @@ WiFiClientSecure client;
 GoogleMapsDirectionsApi api(API_KEY, client);
 
 //Free Google Maps Api only allows for 2500 "elements" a day, so carful you dont go over
-int api_mtbs = 60000; //mean time between api requests
-long api_lasttime = 0;   //last time api request has been done
+unsigned long api_mtbs = 60000; //mean time between api requests
+unsigned long api_due_time = 0;
 bool firstTime = true;
 
 //Inputs
 
 String origin = "Galway";
 String destination = "Dublin,Ireland";
-// For both origin and destination you should be
-// able to pass multiple seperated by a |
-// e.g destination1|destination2 etc
+String waypoints = "via:Cork,Ireland"; //You need to include the via: before your waypoint
 
 
 //Optional
-String departureTime = "now"; //This can also be a timestamp, needs to be in the future for traffic info
-String trafficModel = "best_guess"; //defaults to this anyways. see https://developers.google.com/maps/documentation/distance-matrix/intro#DistanceMatrixRequests for more info
+DirectionsInputOptions inputOptions;
 
 void setup() {
 
@@ -61,15 +59,21 @@ void setup() {
   IPAddress ip = WiFi.localIP();
   Serial.println(ip);
 
-  checkGoogleMaps();
+  //These are all optional (although departureTime needed for traffic)
+  inputOptions.departureTime = "now"; //can also be a future timestamp
+  inputOptions.trafficModel = "best_guess"; //Defaults to this anyways
+  inputOptions.avoid = "ferries";
+  inputOptions.units = "metric";
 }
 
 void checkGoogleMaps() {
   Serial.println("Getting traffic for " + origin + " to " + destination);
-  DirectionsResponse response = api.directionsApi(origin, destination, departureTime, trafficModel);
+  DirectionsResponse response = api.directionsApi(origin, destination, inputOptions);
   Serial.println("Response:");
-  Serial.print("Summary: ");
-  Serial.println(response.summary);
+  Serial.print("Trafic from ");
+  Serial.print(response.start_address);
+  Serial.print(" to ");
+  Serial.println(response.end_address);
 
   Serial.print("Duration in Traffic text: ");
   Serial.println(response.durationTraffic_text);
@@ -88,9 +92,15 @@ void checkGoogleMaps() {
 }
 
 void loop() {
-
-  if ((millis() > api_lasttime + api_mtbs))  {
+  unsigned long timeNow = millis();
+  if ((timeNow > api_due_time))  {
+    Serial.println("Check With No Waypoint");
+    inputOptions.waypoints = "";
     checkGoogleMaps();
-    api_lasttime = millis();
+    Serial.print("Check With Waypoint: ");
+    Serial.println(waypoints);
+    inputOptions.waypoints = waypoints;
+    checkGoogleMaps();
+    api_due_time = timeNow + api_mtbs;
   }
 }

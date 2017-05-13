@@ -34,7 +34,16 @@ struct DirectionsResponse{
   String duration_text;
   int durationTraffic_value;
   String durationTraffic_text;
-  String summary;
+  String start_address;
+  String end_address;
+};
+
+struct DirectionsInputOptions{
+  String departureTime;
+  String trafficModel;
+  String waypoints;
+  String units;
+  String avoid;
 };
 
 class GoogleMapsDirectionsApi
@@ -42,12 +51,10 @@ class GoogleMapsDirectionsApi
   public:
     GoogleMapsDirectionsApi (String apiKey, Client &client);
     DirectionsResponse sendGetToGoogleMapsDirections(String command);
-    DirectionsResponse directionsApi(String origin, String destination, String departureTime = "", String trafficModel = "" );
+    DirectionsResponse directionsApi(String origin, String destination, DirectionsInputOptions options = DirectionsInputOptions());
 
   private:
     String _apiKey;
     Client *client;
-    const int maxMessageLength = 30000;
-    bool checkForOkResponse(String response);
 };
 #endif
