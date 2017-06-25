@@ -21,13 +21,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 #include <Arduino.h>
 #include <Client.h>
 
-#include "JsonStreamingParser.h"
 #include "JsonListener.h"
+#include "JsonStreamingParser.h"
 
 #define GMAPI_HOST "maps.googleapis.com"
 #define GMAPI_SSL_PORT 443
 
-struct DirectionsResponse{
+struct DirectionsResponse {
   int distance_value;
   String distance_text;
   int duration_value;
@@ -38,7 +38,7 @@ struct DirectionsResponse{
   String end_address;
 };
 
-struct DirectionsInputOptions{
+struct DirectionsInputOptions {
   String departureTime;
   String trafficModel;
   String waypoints;
@@ -46,15 +46,16 @@ struct DirectionsInputOptions{
   String avoid;
 };
 
-class GoogleMapsDirectionsApi
-{
-  public:
-    GoogleMapsDirectionsApi (String apiKey, Client &client);
-    DirectionsResponse sendGetToGoogleMapsDirections(String command);
-    DirectionsResponse directionsApi(String origin, String destination, DirectionsInputOptions options = DirectionsInputOptions());
+class GoogleMapsDirectionsApi {
+ public:
+  GoogleMapsDirectionsApi(String apiKey, Client &client);
+  DirectionsResponse sendGetToGoogleMapsDirections(String command);
+  DirectionsResponse directionsApi(
+      String origin, String destination,
+      DirectionsInputOptions options = DirectionsInputOptions());
 
-  private:
-    String _apiKey;
-    Client *client;
+ private:
+  String _apiKey;
+  Client *client;
 };
 #endif
