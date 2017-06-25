@@ -20,7 +20,6 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 */
 
-
 #ifndef GoogleMapsApi_h
 #define GoogleMapsApi_h
 
@@ -31,21 +30,19 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 #define HOST "maps.googleapis.com"
 #define SSL_PORT 443
 
+class GoogleMapsApi {
+ public:
+  GoogleMapsApi(String apiKey, Client &client);
+  String sendGetToGoogleMaps(String command);
+  String distanceMatrix(String origin, String destination,
+                        String departureTime = "", String trafficModel = "");
 
-
-class GoogleMapsApi
-{
-  public:
-    GoogleMapsApi (String apiKey, Client &client);
-    String sendGetToGoogleMaps(String command);
-    String distanceMatrix(String origin, String destination, String departureTime = "", String trafficModel = "" );
-
-  private:
-    //JsonObject * parseUpdates(String response);
-    String _apiKey;
-    Client *client;
-    const int maxMessageLength = 1500;
-    bool checkForOkResponse(String response);
+ private:
+  // JsonObject * parseUpdates(String response);
+  String _apiKey;
+  Client *client;
+  const int maxMessageLength = 1500;
+  bool checkForOkResponse(String response);
 };
 
 #endif
