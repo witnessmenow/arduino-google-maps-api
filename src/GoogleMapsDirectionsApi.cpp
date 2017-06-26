@@ -133,8 +133,48 @@ void DirectionsListener::startObject() {
 }
 //*********** END of Json Parser code **************//
 
+bool needsEncoding(char c) {
+  return !(isalnum(c) || c == '-' || c == '_' || c == '.' || c == '~');
+}
+
+const String urlEncode(const String& str) {
+  // Typically, we value memory more highly than clock speed on Arduino-class
+  // devices. As a consequence, loop through the original string once
+  // and avoid allocation if we can get away without it.
+  bool skip = true;
+  for (size_t i = 0; i < str.length(); i++) {
+    if (needsEncoding(str[i])) {
+      skip = false;
+      break;
+    }
+  }
+
+  if (skip) {
+    return str;
+  }
+
+  String escaped;
+  escaped.reserve(str.length());
+
+  for (size_t i = 0; i < str.length(); i++) {
+    char c = str[i];
+    if (needsEncoding(c)) {
+      // Use URL encoding for special characters.
+      char buf[3];
+      snprintf(buf, sizeof(buf), "%X", static_cast<size_t>(c));
+      escaped.concat("%");
+      escaped.concat(buf);
+    } else {
+      // Keep alphanumeric and other accepted characters intact.
+      escaped.concat(c);
+    }
+  }
+
+  return escaped;
+}
+
 GoogleMapsDirectionsApi::GoogleMapsDirectionsApi(String apiKey,
-                                                 Client &client) {
+                                                 Client& client) {
   _apiKey = apiKey;
   this->client = &client;
 }
@@ -151,11 +191,9 @@ DirectionsResponse GoogleMapsDirectionsApi::sendGetToGoogleMapsDirections(
   parser.setListener(&listener);
 
   long now;
-  bool avail;
   // Connect with google-maps api over ssl
   if (client->connect(GMAPI_HOST, GMAPI_SSL_PORT)) {
     // Serial.println(".... connected to server");
-    char c;
     client->println("GET " + command);
     now = millis();
     while (millis() - now < 3000) {
@@ -179,26 +217,26 @@ DirectionsResponse GoogleMapsDirectionsApi::sendGetToGoogleMapsDirections(
 
 DirectionsResponse GoogleMapsDirectionsApi::directionsApi(
     String origin, String destination, DirectionsInputOptions options) {
+  // If you can't find it(for example if you have a custom
+  // url) look here:
+  // https://www.google-maps.com/account_advanced
   String command =
-      "https://maps.googleapis.com/maps/api/directions/json?origin=" + origin +
-      "&destination=" +
-      destination;  // If you can't find it(for example if you have a custom
-                    // url) look here:
-                    // https://www.google-maps.com/account_advanced
+      "https://maps.googleapis.com/maps/api/directions/json?origin=" +
+      urlEncode(origin) + "&destination=" + urlEncode(destination);
   if (options.departureTime != "") {
-    command = command + "&departure_time=" + options.departureTime;
+    command = command + "&departure_time=" + urlEncode(options.departureTime);
   }
   if (options.trafficModel != "") {
-    command = command + "&traffic_model=" + options.trafficModel;
+    command = command + "&traffic_model=" + urlEncode(options.trafficModel);
   }
   if (options.waypoints != "") {
-    command = command + "&waypoints=" + options.waypoints;
+    command = command + "&waypoints=" + urlEncode(options.waypoints);
   }
   if (options.units != "") {
-    command = command + "&units=" + options.units;
+    command = command + "&units=" + urlEncode(options.units);
   }
   if (options.avoid != "") {
-    command = command + "&avoid=" + options.avoid;
+    command = command + "&avoid=" + urlEncode(options.avoid);
   }
 
   command = command + "&key=" + _apiKey;
