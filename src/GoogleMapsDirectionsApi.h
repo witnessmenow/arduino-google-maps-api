@@ -40,6 +40,7 @@ struct DirectionsResponse {
 
 struct DirectionsInputOptions {
   String departureTime;
+  String travelMode;
   String trafficModel;
   String waypoints;
   String units;
